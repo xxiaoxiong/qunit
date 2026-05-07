@@ -75,7 +75,8 @@
             version added: <a href="https://github.com/qunitjs/qunit/releases/tag/2.5.0">2.5.0</a><span class="sep">.</span></p>
     <h2 id="description" class="screen-reader-text h-api-desc">Description</h2>
 <p><code class="language-plaintext highlighter-rouge">rejects( promise, message = "" )</code><br />
-<code class="language-plaintext highlighter-rouge">rejects( promise, expectedMatcher, message = "" )</code></p>
+<code class="language-plaintext highlighter-rouge">rejects( promise, expectedMatcher, message = "" )</code><br />
+<code class="language-plaintext highlighter-rouge">rejectionValue = await rejects( promise, message = "" )</code></p>
 
 <p>Test if the provided promise rejects, and optionally compare the rejection value.</p>
 
@@ -117,6 +118,10 @@ comparison.</p>
 
 <p>Note: in order to avoid confusion between the <code class="language-plaintext highlighter-rouge">message</code> and the <code class="language-plaintext highlighter-rouge">expectedMatcher</code>, the <code class="language-plaintext highlighter-rouge">expectedMatcher</code> <strong>can not</strong> be a string.</p>
 
+<p><code class="language-plaintext highlighter-rouge">assert.rejects()</code> returns a promise which is resolved with the rejection value from the provided
+promise. This can be used instead of <code class="language-plaintext highlighter-rouge">expectedMatcher</code> to assert other facts about the expected
+failure.</p>
+
 <h2 id="see-also">See also</h2>
 
 <ul>
@@ -145,7 +150,7 @@ comparison.</p>
 
 <h3 id="example-matcher-argument">Example: Matcher argument</h3>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">QUnit</span><span class="p">.</span><span class="nf">test</span><span class="p">(</span><span class="dl">'</span><span class="s1">rejects example</span><span class="dl">'</span><span class="p">,</span> <span class="nf">function </span><span class="p">(</span><span class="nx">assert</span><span class="p">)</span> <span class="p">{</span>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">QUnit</span><span class="p">.</span><span class="nf">test</span><span class="p">(</span><span class="dl">'</span><span class="s1">rejects example</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="nf">function </span><span class="p">(</span><span class="nx">assert</span><span class="p">)</span> <span class="p">{</span>
   <span class="c1">// simple check</span>
   <span class="nx">assert</span><span class="p">.</span><span class="nf">rejects</span><span class="p">(</span><span class="nb">Promise</span><span class="p">.</span><span class="nf">reject</span><span class="p">(</span><span class="dl">'</span><span class="s1">some error</span><span class="dl">'</span><span class="p">));</span>
 
@@ -196,6 +201,13 @@ comparison.</p>
       <span class="k">return</span> <span class="nx">err</span><span class="p">.</span><span class="nf">toString</span><span class="p">()</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">some error</span><span class="dl">'</span><span class="p">;</span>
     <span class="p">}</span>
   <span class="p">);</span>
+
+  <span class="c1">// custom validation using return value</span>
+  <span class="kd">const</span> <span class="nx">err</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">assert</span><span class="p">.</span><span class="nf">rejects</span><span class="p">(</span>
+    <span class="nb">Promise</span><span class="p">.</span><span class="nf">reject</span><span class="p">(</span><span class="k">new</span> <span class="nc">CustomError</span><span class="p">(</span><span class="dl">'</span><span class="s1">some error</span><span class="dl">'</span><span class="p">))</span>
+  <span class="p">);</span>
+  <span class="nx">assert</span><span class="p">.</span><span class="nf">true</span><span class="p">(</span><span class="nx">err</span> <span class="k">instanceof</span> <span class="nx">CustomError</span><span class="p">);</span>
+  <span class="nx">assert</span><span class="p">.</span><span class="nf">strictEqual</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">toString</span><span class="p">(),</span> <span class="dl">'</span><span class="s1">some error</span><span class="dl">'</span><span class="p">);</span>
 <span class="p">});</span>
 </code></pre></div></div>
 
@@ -265,17 +277,12 @@ comparison.</p>
 <span class="p">});</span>
 </code></pre></div></div>
 
-<p>If you want to perform additional assertions after a failure, consider performing these directly in your test function, after <code class="language-plaintext highlighter-rouge">assert.rejects()</code>:</p>
+<p>If you want to perform additional assertions after a failure, consider performing these directly in your test function, after <code class="language-plaintext highlighter-rouge">await assert.rejects()</code>:</p>
 
 <div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">QUnit</span><span class="p">.</span><span class="nf">test</span><span class="p">(</span><span class="dl">'</span><span class="s1">example</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="nf">function </span><span class="p">(</span><span class="nx">assert</span><span class="p">)</span> <span class="p">{</span>
   <span class="kd">const</span> <span class="nx">p</span> <span class="o">=</span> <span class="nf">feedMe</span><span class="p">();</span>
-  <span class="k">await</span> <span class="nx">assert</span><span class="p">.</span><span class="nf">rejects</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">RangeError</span><span class="p">);</span>
-
-  <span class="k">try</span> <span class="p">{</span>
-    <span class="k">await</span> <span class="nx">p</span><span class="p">;</span>
-  <span class="p">}</span> <span class="k">catch </span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nx">assert</span><span class="p">.</span><span class="nf">deepEqual</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">somedata</span><span class="p">,</span> <span class="p">{</span> <span class="na">foo</span><span class="p">:</span> <span class="dl">'</span><span class="s1">bar</span><span class="dl">'</span> <span class="p">});</span>
-  <span class="p">}</span>
+  <span class="kd">const</span> <span class="nx">e</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">assert</span><span class="p">.</span><span class="nf">rejects</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">RangeError</span><span class="p">);</span>
+  <span class="nx">assert</span><span class="p">.</span><span class="nf">deepEqual</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">somedata</span><span class="p">,</span> <span class="p">{</span> <span class="na">foo</span><span class="p">:</span> <span class="dl">'</span><span class="s1">bar</span><span class="dl">'</span> <span class="p">});</span>
 <span class="p">});</span>
 </code></pre></div></div>
 

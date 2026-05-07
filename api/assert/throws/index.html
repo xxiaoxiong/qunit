@@ -75,7 +75,8 @@
             version added: <a href="https://github.com/qunitjs/qunit/releases/tag/1.0.0">1.0.0</a><span class="sep">.</span></p>
     <h2 id="description" class="screen-reader-text h-api-desc">Description</h2>
 <p><code class="language-plaintext highlighter-rouge">throws( blockFn, message = "" )</code><br />
-<code class="language-plaintext highlighter-rouge">throws( blockFn, expectedMatcher, message = "" )</code></p>
+<code class="language-plaintext highlighter-rouge">throws( blockFn, expectedMatcher, message = "" )</code><br />
+<code class="language-plaintext highlighter-rouge">thrownValue = throws( blockFn, message = "" )</code></p>
 
 <p>Test if a callback throws an exception, and optionally compare the thrown error.</p>
 
@@ -112,6 +113,10 @@
   <li>A RegExp that matches (or partially matches) the string representation.</li>
   <li>A callback with your own custom validation, that returns <code class="language-plaintext highlighter-rouge">true</code> or <code class="language-plaintext highlighter-rouge">false</code>.</li>
 </ul>
+
+<p><code class="language-plaintext highlighter-rouge">assert.throws()</code> returns the value which was thrown from the provided
+function. This can be used instead of <code class="language-plaintext highlighter-rouge">expectedMatcher</code> to assert other facts about the expected
+failure.</p>
 
 <p class="note">If you need to comply with classic ES3 syntax, such as in early versions of Closure Compiler, you can use <code class="language-plaintext highlighter-rouge">assert.raises()</code>, which is an alias for <code class="language-plaintext highlighter-rouge">assert.throws()</code>. It has the same signature and behaviour.</p>
 
@@ -203,6 +208,13 @@
       <span class="k">return</span> <span class="nx">err</span><span class="p">.</span><span class="nf">toString</span><span class="p">()</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">some error</span><span class="dl">'</span><span class="p">;</span>
     <span class="p">}</span>
   <span class="p">);</span>
+
+  <span class="c1">// custom validation using return value</span>
+  <span class="kd">const</span> <span class="nx">err</span> <span class="o">=</span> <span class="nx">assert</span><span class="p">.</span><span class="nf">throws</span><span class="p">(</span><span class="nf">function </span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nc">CustomError</span><span class="p">(</span><span class="dl">'</span><span class="s1">some error</span><span class="dl">'</span><span class="p">);</span>
+  <span class="p">});</span>
+  <span class="nx">assert</span><span class="p">.</span><span class="nf">true</span><span class="p">(</span><span class="nx">err</span> <span class="k">instanceof</span> <span class="nx">CustomError</span><span class="p">);</span>
+  <span class="nx">assert</span><span class="p">.</span><span class="nf">strictEqual</span><span class="p">(</span><span class="nx">err</span><span class="p">.</span><span class="nf">toString</span><span class="p">(),</span> <span class="dl">'</span><span class="s1">some error</span><span class="dl">'</span><span class="p">);</span>
 <span class="p">});</span>
 </code></pre></div></div>
 
