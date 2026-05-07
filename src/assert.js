@@ -324,6 +324,8 @@ class Assert {
       expected,
       message
     });
+
+    return actual;
   }
 
   rejects (promise, expected, message) {
@@ -371,6 +373,8 @@ class Assert {
           message
         });
         done();
+
+        return actual;
       }
     );
   }
