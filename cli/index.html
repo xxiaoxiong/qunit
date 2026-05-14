@@ -200,7 +200,7 @@ Options:
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qunit <span class="nb">test</span>/ | tap-min
 </code></pre></div></div>
 
-<p>To change the reporting from QUnit itself, use <code class="language-plaintext highlighter-rouge">qunit --reporter &lt;name&gt;</code> to set a different reporter, where <code class="language-plaintext highlighter-rouge">&lt;name&gt;</code> can be the name of a built-in reporter, or a Node module (e.g. npm package) that implements the <a href="/api/callbacks/QUnit.on/#reporter-api">QUnit Reporter API</a>. The reporter will be loaded and initialised automatically.</p>
+<p>To change the reporting from QUnit itself, use <code class="language-plaintext highlighter-rouge">qunit --reporter &lt;name&gt;</code> to set a different reporter, where <code class="language-plaintext highlighter-rouge">&lt;name&gt;</code> can be the name of a built-in reporter, or a Node module (e.g. npm package, or local script) that implements the <a href="/api/callbacks/QUnit.on/#reporter-api">QUnit Reporter API</a>. The reporter will be loaded and initialised automatically.</p>
 
 <p>To load a reporter from a local Node.js script, use <code class="language-plaintext highlighter-rouge">--require</code> instead.</p>
 
@@ -208,6 +208,7 @@ Options:
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qunit <span class="nt">--reporter</span> tap
 qunit <span class="nt">--reporter</span> qunit-reporter-example
+qunit <span class="nt">--reporter</span> ./build/qunit-reporter-example.js
 </code></pre></div></div>
 
 <h3 id="--require"><code class="language-plaintext highlighter-rouge">--require</code></h3>
