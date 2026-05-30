@@ -130,6 +130,10 @@ export default (function () {
         return 'node';
       } else if (isArray(obj)) {
         return 'array';
+      } else if (obj instanceof Map) {
+        return 'map';
+      } else if (obj instanceof Set) {
+        return 'set';
       } else if (obj.constructor === Error.prototype.constructor) {
         return 'error';
       }
@@ -229,6 +233,30 @@ export default (function () {
         }
         dump.down();
         return join('{', ret, '}');
+      },
+      map: function (map, stack) {
+        if (config.maxDepth && dump.depth > config.maxDepth) {
+          return '[object Map]';
+        }
+        const ret = [];
+        dump.up();
+        for (const [key, val] of map) {
+          ret.push(dump.parse(key, undefined, stack) + ': ' + dump.parse(val, undefined, stack));
+        }
+        dump.down();
+        return join('Map{', ret, '}');
+      },
+      set: function (set, stack) {
+        if (config.maxDepth && dump.depth > config.maxDepth) {
+          return '[object Set]';
+        }
+        const ret = [];
+        dump.up();
+        for (const val of set) {
+          ret.push(dump.parse(val, undefined, stack));
+        }
+        dump.down();
+        return join('Set{', ret, '}');
       },
       node: function (node) {
         const open = '<';
